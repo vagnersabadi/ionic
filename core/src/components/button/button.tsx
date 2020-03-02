@@ -4,7 +4,7 @@ import { getIonMode } from '../../global/ionic-global';
 import { Color, RouterDirection } from '../../interface';
 import { AnchorInterface, ButtonInterface } from '../../utils/element-interface';
 import { hasShadowDom } from '../../utils/helpers';
-import { createColorClasses, openURL } from '../../utils/theme';
+import { createColorClasses, hostContext, openURL } from '../../utils/theme';
 
 /**
  * @virtualProp {"ios" | "md"} mode - The mode determines which platform styles to use.
@@ -13,6 +13,9 @@ import { createColorClasses, openURL } from '../../utils/theme';
  * @slot icon-only - Should be used on an icon in a button that has no text.
  * @slot start - Content is placed to the left of the button text in LTR, and to the right in RTL.
  * @slot end - Content is placed to the right of the button text in LTR, and to the left in RTL.
+ *
+ * @part button - The native button or anchor tag that is rendered.
+ * @part button-inner - The span inside of the native button or anchor.
  */
 @Component({
   tag: 'ion-button',
@@ -205,7 +208,8 @@ export class Button implements ComponentInterface, AnchorInterface, ButtonInterf
           [`${buttonType}-${shape}`]: shape !== undefined,
           [`${buttonType}-${fill}`]: true,
           [`${buttonType}-strong`]: strong,
-
+          'in-toolbar': hostContext('ion-toolbar', this.el),
+          'in-toolbar-color': hostContext('ion-toolbar[color]', this.el),
           'button-has-icon-only': hasIconOnly,
           'button-disabled': disabled,
           'ion-activatable': true,
@@ -218,8 +222,9 @@ export class Button implements ComponentInterface, AnchorInterface, ButtonInterf
           disabled={disabled}
           onFocus={this.onFocus}
           onBlur={this.onBlur}
+          part="button"
         >
-          <span class="button-inner">
+          <span class="button-inner" part="button-inner">
             <slot name="icon-only"></slot>
             <slot name="start"></slot>
             <slot></slot>

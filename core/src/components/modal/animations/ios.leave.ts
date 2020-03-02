@@ -9,7 +9,7 @@ export const iosLeaveAnimation = (
   baseEl: HTMLElement,
   presentingEl?: HTMLElement,
   duration = 500
-  ): Animation => {
+): Animation => {
 
   const backdropAnimation = createAnimation()
     .addElement(baseEl.querySelector('ion-backdrop')!)
@@ -18,7 +18,7 @@ export const iosLeaveAnimation = (
   const wrapperAnimation = createAnimation()
     .addElement(baseEl.querySelector('.modal-wrapper')!)
     .beforeStyles({ 'opacity': 1 })
-    .fromTo('transform', `translateY(0%)`, 'translateY(100%)');
+    .fromTo('transform', 'translateY(0%)', 'translateY(100%)');
 
   const baseAnimation = createAnimation()
     .addElement(baseEl)
@@ -27,7 +27,7 @@ export const iosLeaveAnimation = (
     .addAnimation([backdropAnimation, wrapperAnimation]);
 
   if (presentingEl) {
-    const modalTransform = (presentingEl.tagName === 'ION-MODAL' && (presentingEl as HTMLIonModalElement).presentingElement !== undefined) ? 40 : 0;
+    const modalTransform = (presentingEl.tagName === 'ION-MODAL' && (presentingEl as HTMLIonModalElement).presentingElement !== undefined) ? '-10px' : 'max(30px, var(--ion-safe-area-top))';
     const bodyEl = document.body;
     const currentPresentingScale = SwipeToCloseDefaults.MIN_PRESENTING_SCALE;
     const presentingAnimation = createAnimation()
@@ -38,14 +38,16 @@ export const iosLeaveAnimation = (
         // only reset background color if this is the last card-style modal
         if (currentStep !== 1) { return; }
 
+        presentingEl.style.setProperty('overflow', '');
+
         const numModals = Array.from(bodyEl.querySelectorAll('ion-modal')).filter(m => m.presentingElement !== undefined).length;
         if (numModals <= 1) {
           bodyEl.style.setProperty('background-color', '');
         }
       })
       .keyframes([
-        { offset: 0, transform: `translateY(${-modalTransform}px) scale(${currentPresentingScale})`, 'border-radius': '10px 10px 0 0' },
-        { offset: 1, transform: 'translateY(0px) scale(1)', 'border-radius': '0px' }
+        { offset: 0, filter: 'contrast(0.85)', transform: `translateY(${modalTransform}) scale(${currentPresentingScale})`, borderRadius: '10px 10px 0 0' },
+        { offset: 1, filter: 'contrast(1)', transform: 'translateY(0px) scale(1)', borderRadius: '0px' }
       ]);
 
     baseAnimation.addAnimation(presentingAnimation);

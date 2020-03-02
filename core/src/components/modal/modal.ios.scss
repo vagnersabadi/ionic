@@ -20,10 +20,13 @@
 }
 
 :host(.modal-card) {
+  --backdrop-opacity: 0;
+  --width: 100%;
+  
   align-items: flex-end;
 }
 
 :host(.modal-card) .modal-wrapper {
   @include border-radius($modal-ios-border-radius, $modal-ios-border-radius, 0, 0);
-  height: calc(100% - 40px);
+  height: calc(100% - max(30px, var(--ion-safe-area-top)) - 10px);
 }

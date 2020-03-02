@@ -2,12 +2,6 @@
 
 A Modal is a dialog that appears on top of the app's content, and must be dismissed by the app before interaction can resume. It is useful as a select component when there are a lot of options to choose from, or when filtering items in a list, as well as many other use cases.
 
-
-### Creating
-
-Modals can be created using a [Modal Controller](../modal-controller). They can be customized by passing modal options in the modal controller's `create()` method.
-
-
 ### Dismissing
 
 The modal can be dismissed after creation by calling the `dismiss()` method on the modal controller. The `onDidDismiss` function can be called to perform an action after the modal is dismissed.
@@ -157,6 +151,8 @@ export class CalendarComponentModule {}
 
 Modals in iOS mode have the ability to be presented in a card-style and swiped to close. The card-style presentation and swipe to close gesture are not mutually exclusive, meaning you can pick and choose which features you want to use. For example, you can have a card-style modal that cannot be swiped or a full sized modal that can be swiped.
 
+If you are creating an application that uses `ion-tabs`, it is recommended that you get the parent `ion-router-outlet` using `this.routerOutlet.parentOutlet.nativeEl`, otherwise the tabbar will not scale down when the modal opens.
+
 ```javascript
 import { IonRouterOutlet } from '@ionic/angular';
 
@@ -253,7 +249,7 @@ customElements.define('modal-page', class extends HTMLElement {
 
 ### Dismissing a Modal
 
-A modal can be dismissed by calling the dismiss method on the modal controller and optionally passing any data from the modal.
+A modal can be dismissed by calling the dismiss method and optionally passing any data from the modal.
 
 ```javascript
 async function dismissModal() {
@@ -384,8 +380,8 @@ export default {
 
 ```html
 <template>
-  <ion-page class="ion-page" main>
-    <ion-content class="ion-content" padding>
+  <ion-page class="ion-page">
+    <ion-content class="ion-content ion-padding">
       <ion-button @click="openModal">Open Modal</ion-button>
     </ion-content>
   </ion-page>

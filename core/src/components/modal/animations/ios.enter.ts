@@ -27,14 +27,16 @@ export const iosEnterAnimation = (
     .addAnimation([backdropAnimation, wrapperAnimation]);
 
   if (presentingEl) {
-    const modalTransform = (presentingEl.tagName === 'ION-MODAL' && (presentingEl as HTMLIonModalElement).presentingElement !== undefined) ? 40 : 0;
+    const modalTransform = (presentingEl.tagName === 'ION-MODAL' && (presentingEl as HTMLIonModalElement).presentingElement !== undefined) ? '-10px' : 'max(30px, var(--ion-safe-area-top))';
     const bodyEl = document.body;
     const toPresentingScale = SwipeToCloseDefaults.MIN_PRESENTING_SCALE;
-    const finalTransform = `translateY(${-modalTransform}px) scale(${toPresentingScale})`;
+    const finalTransform = `translateY(${modalTransform}) scale(${toPresentingScale})`;
 
     const presentingAnimation = createAnimation()
       .beforeStyles({
-        'transform': 'translateY(0)'
+        'transform': 'translateY(0)',
+        'transform-origin': 'top center',
+        'overflow': 'hidden'
       })
       .afterStyles({
         'transform': finalTransform
@@ -42,8 +44,8 @@ export const iosEnterAnimation = (
       .beforeAddWrite(() => bodyEl.style.setProperty('background-color', 'black'))
       .addElement(presentingEl)
       .keyframes([
-        { offset: 0, transform: 'translateY(0px) scale(1)', 'border-radius': '0px' },
-        { offset: 1, transform: finalTransform, 'border-radius': '10px 10px 0 0' }
+        { offset: 0, filter: 'contrast(1)', transform: 'translateY(0px) scale(1)', borderRadius: '0px' },
+        { offset: 1, filter: 'contrast(0.85)', transform: finalTransform, borderRadius: '10px 10px 0 0' }
       ]);
 
     baseAnimation.addAnimation(presentingAnimation);
