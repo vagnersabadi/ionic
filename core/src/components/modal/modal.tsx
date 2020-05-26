@@ -1,4 +1,4 @@
-import { Component, ComponentInterface, Element, Event, EventEmitter, Host, Method, Prop, h, writeTask } from '@stencil/core';
+import { Component, ComponentInterface, Element, Event, EventEmitter, Host, Method, Prop, Watch, h, writeTask } from '@stencil/core';
 
 import { config } from '../../global/config';
 import { getIonMode } from '../../global/ionic-global';
@@ -35,7 +35,6 @@ export class Modal implements ComponentInterface, OverlayInterface {
   private gestureAnimationDismissing = false;
   presented = false;
   animation?: Animation;
-  mode = getIonMode(this);
 
   @Element() el!: HTMLIonModalElement;
 
@@ -122,6 +121,15 @@ export class Modal implements ComponentInterface, OverlayInterface {
    */
   @Event({ eventName: 'ionModalDidDismiss' }) didDismiss!: EventEmitter<OverlayEventDetail>;
 
+  @Watch('swipeToClose')
+  swipeToCloseChanged(enable: boolean) {
+    if (this.gesture) {
+      this.gesture.enable(enable);
+    } else if (enable) {
+      this.initSwipeToClose();
+    }
+  }
+
   constructor() {
     prepareOverlay(this.el);
   }
@@ -149,36 +157,41 @@ export class Modal implements ComponentInterface, OverlayInterface {
 
     await present(this, 'modalEnter', iosEnterAnimation, mdEnterAnimation, this.presentingElement);
 
-    const mode = getIonMode(this);
-    if (this.swipeToClose && mode === 'ios') {
-      // All of the elements needed for the swipe gesture
-      // should be in the DOM and referenced by now, except
-      // for the presenting el
-      const animationBuilder = this.leaveAnimation || config.get('modalLeave', iosLeaveAnimation);
-      const ani = this.animation = animationBuilder(this.el, this.presentingElement);
-      this.gesture = createSwipeToCloseGesture(
-        this.el,
-        ani,
-        () => {
-          /**
-           * While the gesture animation is finishing
-           * it is possible for a user to tap the backdrop.
-           * This would result in the dismiss animation
-           * being played again. Typically this is avoided
-           * by setting `presented = false` on the overlay
-           * component; however, we cannot do that here as
-           * that would prevent the element from being
-           * removed from the DOM.
-           */
-          this.gestureAnimationDismissing = true;
-          this.animation!.onFinish(async () => {
-            await this.dismiss(undefined, 'gesture');
-            this.gestureAnimationDismissing = false;
-          });
-        },
-      );
-      this.gesture.enable(true);
+    if (this.swipeToClose) {
+      this.initSwipeToClose();
     }
+  }
+
+  private initSwipeToClose() {
+    if (getIonMode(this) !== 'ios') { return; }
+
+    // All of the elements needed for the swipe gesture
+    // should be in the DOM and referenced by now, except
+    // for the presenting el
+    const animationBuilder = this.leaveAnimation || config.get('modalLeave', iosLeaveAnimation);
+    const ani = this.animation = animationBuilder(this.el, this.presentingElement);
+    this.gesture = createSwipeToCloseGesture(
+      this.el,
+      ani,
+      () => {
+        /**
+         * While the gesture animation is finishing
+         * it is possible for a user to tap the backdrop.
+         * This would result in the dismiss animation
+         * being played again. Typically this is avoided
+         * by setting `presented = false` on the overlay
+         * component; however, we cannot do that here as
+         * that would prevent the element from being
+         * removed from the DOM.
+         */
+        this.gestureAnimationDismissing = true;
+        this.animation!.onFinish(async () => {
+          await this.dismiss(undefined, 'gesture');
+          this.gestureAnimationDismissing = false;
+        });
+      },
+    );
+    this.gesture.enable(true);
   }
 
   /**
@@ -257,6 +270,7 @@ export class Modal implements ComponentInterface, OverlayInterface {
       <Host
         no-router
         aria-modal="true"
+        tabindex="-1"
         class={{
           [mode]: true,
           [`modal-card`]: this.presentingElement !== undefined && mode === 'ios',
@@ -273,6 +287,8 @@ export class Modal implements ComponentInterface, OverlayInterface {
         onIonModalDidDismiss={this.onLifecycle}
       >
         <ion-backdrop visible={this.showBackdrop} tappable={this.backdropDismiss}/>
+
+        {mode === 'ios' && <div class="modal-shadow"></div>}
         <div
           role="dialog"
           class="modal-wrapper"

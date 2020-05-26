@@ -15,7 +15,8 @@ export class ModalExample {
 
   async presentModal() {
     const modal = await this.modalController.create({
-      component: ModalPage
+      component: ModalPage,
+      cssClass: 'my-custom-class'
     });
     return await modal.present();
   }
@@ -24,28 +25,27 @@ export class ModalExample {
 
 ```typescript
 import { Component, Input } from '@angular/core';
-import { NavParams } from '@ionic/angular';
 
 @Component({
   selector: 'modal-page',
 })
 export class ModalPage {
 
-  constructor() {
-
-  }
+  constructor() {}
 
 }
 ```
 
 ### Passing Data
 
-During creation of a modal, data can be passed in through the `componentProps`. The previous example can be written to include data:
+During creation of a modal, data can be passed in through the `componentProps`.
+The previous example can be written to include data:
 
 ```typescript
 async presentModal() {
   const modal = await this.modalController.create({
     component: ModalPage,
+    cssClass: 'my-custom-class',
     componentProps: {
       'firstName': 'Douglas',
       'lastName': 'Adams',
@@ -56,7 +56,7 @@ async presentModal() {
 }
 ```
 
-To get the data passed into the `componentProps`, either set it as an `@Input` or access it via `NavParams` on the `ModalPage`:
+To get the data passed into the `componentProps`, set it as an `@Input`:
 
 ```typescript
 export class ModalPage {
@@ -65,11 +65,6 @@ export class ModalPage {
   @Input() firstName: string;
   @Input() lastName: string;
   @Input() middleInitial: string;
-
-  constructor(navParams: NavParams) {
-    // componentProps can also be accessed at construction time using NavParams
-    console.log(navParams.get('firstName'));
-  }
 
 }
 ```
@@ -145,6 +140,7 @@ constructor(private routerOutlet: IonRouterOutlet) {}
 async presentModal() {
   const modal = await this.modalController.create({
     component: ModalPage,
+    cssClass: 'my-custom-class',
     swipeToClose: true,
     presentingElement: this.routerOutlet.nativeEl
   });
@@ -162,9 +158,15 @@ constructor(private modalCtrl: ModalController) {}
 async presentModal() {
   const modal = await this.modalController.create({
     component: ModalPage,
+    cssClass: 'my-custom-class',
     swipeToClose: true,
     presentingElement: await this.modalCtrl.getTop() // Get the top-most ion-modal
   });
   return await modal.present();
 }
 ```
+
+
+### Style Placement
+
+In Angular, the CSS of a specific page is scoped only to elements of that page. Even though the Modal can be presented from within a page, the `ion-modal` element is appended outside of the current page. This means that any custom styles need to go in a global stylesheet file. In an Ionic Angular starter this can be the `src/global.scss` file or you can register a new global style file by [adding to the `styles` build option in `angular.json`](https://angular.io/guide/workspace-config#style-script-config).

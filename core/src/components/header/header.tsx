@@ -87,6 +87,7 @@ export class Header implements ComponentInterface {
 
   private async setupCollapsibleHeader(contentEl: HTMLIonContentElement | null, pageEl: Element | null) {
     if (!contentEl || !pageEl) { console.error('ion-header requires a content to collapse, make sure there is an ion-content.'); return; }
+    if (typeof (IntersectionObserver as any) === 'undefined') { return; }
 
     this.scrollEl = await contentEl.getScrollElement();
 
@@ -126,7 +127,8 @@ export class Header implements ComponentInterface {
     this.scrollEl!.addEventListener('scroll', this.contentScrollCallback);
 
     writeTask(() => {
-      cloneElement('ion-title');
+      const title = cloneElement('ion-title') as HTMLIonTitleElement;
+      title.size = 'large';
       cloneElement('ion-back-button');
 
       if (this.collapsibleMainHeader !== undefined) {

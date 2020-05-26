@@ -1,7 +1,10 @@
-import { Component, ComponentInterface, Element, Event, EventEmitter, Host, Method, Prop, Watch, h } from '@stencil/core';
+import { Component, ComponentInterface, Element, Event, EventEmitter, Host, Method, Prop, Watch, forceUpdate, h } from '@stencil/core';
 
+import { IonicSafeString } from '../../';
 import { getIonMode } from '../../global/ionic-global';
 import { AlertButton, AlertInput, AnimationBuilder, CssClassMap, OverlayEventDetail, OverlayInterface } from '../../interface';
+import { Gesture } from '../../utils/gesture';
+import { createButtonActiveGesture } from '../../utils/gesture/button-active';
 import { BACKDROP, dismiss, eventMethod, isCancel, prepareOverlay, present, safeCall } from '../../utils/overlays';
 import { sanitizeDOMString } from '../../utils/sanitization';
 import { getClassMap } from '../../utils/theme';
@@ -28,9 +31,10 @@ export class Alert implements ComponentInterface, OverlayInterface {
   private inputType?: string;
   private processedInputs: AlertInput[] = [];
   private processedButtons: AlertButton[] = [];
+  private wrapperEl?: HTMLElement;
+  private gesture?: Gesture;
 
   presented = false;
-  mode = getIonMode(this);
 
   @Element() el!: HTMLIonAlertElement;
 
@@ -77,7 +81,7 @@ export class Alert implements ComponentInterface, OverlayInterface {
    *
    * For more information: [Security Documentation](https://ionicframework.com/docs/faq/security)
    */
-  @Prop() message?: string;
+  @Prop() message?: string | IonicSafeString;
 
   /**
    * Array of buttons to be added to the alert.
@@ -171,6 +175,29 @@ export class Alert implements ComponentInterface, OverlayInterface {
     this.buttonsChanged();
   }
 
+  componentDidUnload() {
+    if (this.gesture) {
+      this.gesture.destroy();
+      this.gesture = undefined;
+    }
+  }
+
+  componentDidLoad() {
+    /**
+     * Do not create gesture if:
+     * 1. A gesture already exists
+     * 2. App is running in MD mode
+     * 3. A wrapper ref does not exist
+     */
+    if (this.gesture || getIonMode(this) === 'md' || !this.wrapperEl) { return; }
+
+    this.gesture = createButtonActiveGesture(
+      this.wrapperEl,
+      (refEl: HTMLElement) => refEl.classList.contains('alert-button')
+    );
+    this.gesture.enable(true);
+  }
+
   /**
    * Present the alert overlay after it has been created.
    */
@@ -215,13 +242,13 @@ export class Alert implements ComponentInterface, OverlayInterface {
     }
     this.activeId = selectedInput.id;
     safeCall(selectedInput.handler, selectedInput);
-    this.el.forceUpdate();
+    forceUpdate(this);
   }
 
   private cbClick(selectedInput: AlertInput) {
     selectedInput.checked = !selectedInput.checked;
     safeCall(selectedInput.handler, selectedInput);
-    this.el.forceUpdate();
+    forceUpdate(this);
   }
 
   private buttonClick(button: AlertButton) {
@@ -467,6 +494,7 @@ export class Alert implements ComponentInterface, OverlayInterface {
       <Host
         role="dialog"
         aria-modal="true"
+        tabindex="-1"
         style={{
           zIndex: `${20000 + overlayIndex}`,
         }}
@@ -481,7 +509,7 @@ export class Alert implements ComponentInterface, OverlayInterface {
 
         <ion-backdrop tappable={this.backdropDismiss}/>
 
-        <div class="alert-wrapper">
+        <div class="alert-wrapper" ref={el => this.wrapperEl = el}>
 
           <div class="alert-head">
             {header && <h2 id={hdrId} class="alert-title">{header}</h2>}
@@ -504,6 +532,7 @@ const buttonClass = (button: AlertButton): CssClassMap => {
     'alert-button': true,
     'ion-focusable': true,
     'ion-activatable': true,
+    [`alert-button-role-${button.role}`]: button.role !== undefined,
     ...getClassMap(button.cssClass)
   };
 };

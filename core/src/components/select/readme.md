@@ -8,7 +8,7 @@ If `value` is set on the `<ion-select>`, the selected option will be chosen base
 
 ## Interfaces
 
-By default, select uses the [AlertController API](../alert-controller) to open up the overlay of options in an alert. The interface can be changed to use the [ActionSheetController API](../action-sheet-controller) or [PopoverController API](../popover-controller) by passing `action-sheet` or `popover`, respectively, to the `interface` property. Read on to the other sections for the limitations of the different interfaces.
+By default, select uses [ion-alert](../alert) to open up the overlay of options in an alert. The interface can be changed to use [ion-action-sheet](../action-sheet) or [ion-popover](../popover) by passing `action-sheet` or `popover`, respectively, to the `interface` property. Read on to the other sections for the limitations of the different interfaces.
 
 
 ## Single Selection
@@ -16,7 +16,7 @@ By default, select uses the [AlertController API](../alert-controller) to open u
 By default, the select allows the user to select only one option. The alert interface presents users with a radio button styled list of options. The action sheet interface can only be used with a single value select. The select component's value receives the value of the selected option's value.
 
 
-### Multiple Selection
+## Multiple Selection
 
 By adding the `multiple` attribute to select, users are able to select multiple options. When multiple options can be selected, the alert overlay presents users with a checkbox styled list of options. The select component's value receives an array of all of the selected option values.
 
@@ -37,9 +37,9 @@ The `action-sheet` and `popover` interfaces do not have an `OK` button, clicking
 
 ## Interface Options
 
-Since select uses the alert, action sheet and popover interfaces, options can be passed to these components through the `interfaceOptions` property. This can be used to pass a custom header, subheader, css class, and more. 
+Since select uses the alert, action sheet and popover interfaces, options can be passed to these components through the `interfaceOptions` property. This can be used to pass a custom header, subheader, css class, and more.
 
-See the [AlertController API docs](../alert-controller), [ActionSheetController API docs](../action-sheet-controller), and [PopoverController API docs](../popover-controller) for the properties that each interface accepts.
+See the [ion-alert docs](../alert), [ion-action-sheet docs](../action-sheet), and [ion-popover docs](../popover) for the properties that each interface accepts.
 
 Note: `interfaceOptions` will not override `inputs` or `buttons` with the `alert` interface.
 
@@ -50,7 +50,7 @@ Note: `interfaceOptions` will not override `inputs` or `buttons` with the `alert
 
 ### Angular
 
-## Single Selection
+### Single Selection
 
 ```html
 <ion-list>
@@ -81,7 +81,7 @@ Note: `interfaceOptions` will not override `inputs` or `buttons` with the `alert
 </ion-list>
 ```
 
-## Multiple Selection
+### Multiple Selection
 
 ```html
 <ion-list>
@@ -119,7 +119,7 @@ Note: `interfaceOptions` will not override `inputs` or `buttons` with the `alert
 </ion-list>
 ```
 
-## Objects as Values
+### Objects as Values
 
 ```html
 <ion-list>
@@ -173,7 +173,7 @@ export class SelectExample {
 }
 ```
 
-## Interface Options
+### Interface Options
 
 ```html
 <ion-list>
@@ -255,7 +255,7 @@ export class SelectExample {
 
 ### Javascript
 
-## Single Selection
+### Single Selection
 
 ```html
 <ion-list>
@@ -286,7 +286,7 @@ export class SelectExample {
 </ion-list>
 ```
 
-## Multiple Selection
+### Multiple Selection
 
 ```html
 <ion-list>
@@ -329,7 +329,7 @@ const select = document.querySelector('multiple');
 select.value = ['bird', 'dog'];
 ```
 
-## Objects as Values
+### Objects as Values
 
 ```html
 <ion-list>
@@ -379,12 +379,12 @@ select.value = ['bird', 'dog'];
 
     objectSelectElement.appendChild(selectOption)
   });
-  
+
   objectSelectElement.value = objectOptions[0];
 }
 ```
 
-## Interface Options
+### Interface Options
 
 ```html
 <ion-list>
@@ -463,7 +463,7 @@ customActionSheetSelect.interfaceOptions = customActionSheetOptions;
 
 ### React
 
-## Single Selection
+### Single Selection
 
 ```tsx
 import React, { useState } from 'react';
@@ -512,7 +512,7 @@ export const SingleSelection: React.FC = () => {
 ```
 
 
-## Multiple Selection
+### Multiple Selection
 
 ```tsx
 import React, { useState } from 'react';
@@ -569,7 +569,7 @@ export const MultipleSelection: React.FC = () => {
 ```
 
 
-## Objects as Values
+### Objects as Values
 
 ```tsx
 import React, { useState } from 'react';
@@ -635,7 +635,7 @@ export const ObjectSelection: React.FC = () => {
 ```
 
 
-## Interface Options
+### Interface Options
 
 ```tsx
 import React, { useState } from 'react';
@@ -700,9 +700,9 @@ export const InterfaceOptionsSelection: React.FC = () => {
 
           <IonItem>
             <IonLabel>Popover</IonLabel>
-            <IonSelect 
-              interfaceOptions={customPopoverOptions} 
-              interface="popover" 
+            <IonSelect
+              interfaceOptions={customPopoverOptions}
+              interface="popover"
               placeholder="Select One"
               onIonChange={e => setHairColor(e.detail.value)}
               value={hairColor}>
@@ -742,9 +742,241 @@ export const InterfaceOptionsSelection: React.FC = () => {
 ```
 
 
+### Stencil
+
+### Single Selection
+
+```tsx
+import { Component, h } from '@stencil/core';
+
+@Component({
+  tag: 'select-example',
+  styleUrl: 'select-example.css'
+})
+export class SelectExample {
+  render() {
+    return [
+      <ion-list>
+        <ion-list-header>
+          <ion-label>
+            Single Selection
+          </ion-label>
+        </ion-list-header>
+
+        <ion-item>
+          <ion-label>Gender</ion-label>
+          <ion-select placeholder="Select One">
+            <ion-select-option value="f">Female</ion-select-option>
+            <ion-select-option value="m">Male</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>Hair Color</ion-label>
+          <ion-select value="brown" okText="Okay" cancelText="Dismiss">
+            <ion-select-option value="brown">Brown</ion-select-option>
+            <ion-select-option value="blonde">Blonde</ion-select-option>
+            <ion-select-option value="black">Black</ion-select-option>
+            <ion-select-option value="red">Red</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+      </ion-list>
+    ];
+  }
+}
+```
+
+### Multiple Selection
+
+```tsx
+import { Component, h } from '@stencil/core';
+
+@Component({
+  tag: 'select-example',
+  styleUrl: 'select-example.css'
+})
+export class SelectExample {
+  render() {
+    return [
+      <ion-list>
+        <ion-list-header>
+          <ion-label>
+            Multiple Selection
+          </ion-label>
+        </ion-list-header>
+
+        <ion-item>
+          <ion-label>Toppings</ion-label>
+          <ion-select multiple={true} cancelText="Nah" okText="Okay!">
+            <ion-select-option value="bacon">Bacon</ion-select-option>
+            <ion-select-option value="olives">Black Olives</ion-select-option>
+            <ion-select-option value="xcheese">Extra Cheese</ion-select-option>
+            <ion-select-option value="peppers">Green Peppers</ion-select-option>
+            <ion-select-option value="mushrooms">Mushrooms</ion-select-option>
+            <ion-select-option value="onions">Onions</ion-select-option>
+            <ion-select-option value="pepperoni">Pepperoni</ion-select-option>
+            <ion-select-option value="pineapple">Pineapple</ion-select-option>
+            <ion-select-option value="sausage">Sausage</ion-select-option>
+            <ion-select-option value="Spinach">Spinach</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>Pets</ion-label>
+          <ion-select multiple={true} value={['bird', 'dog']}>
+            <ion-select-option value="bird">Bird</ion-select-option>
+            <ion-select-option value="cat">Cat</ion-select-option>
+            <ion-select-option value="dog">Dog</ion-select-option>
+            <ion-select-option value="honeybadger">Honey Badger</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-list>
+    ];
+  }
+}
+```
+
+### Objects as Values
+
+```tsx
+import { Component, h } from '@stencil/core';
+
+@Component({
+  tag: 'select-example',
+  styleUrl: 'select-example.css'
+})
+export class SelectExample {
+  private users: any[] = [
+    {
+      id: 1,
+      first: 'Alice',
+      last: 'Smith',
+    },
+    {
+      id: 2,
+      first: 'Bob',
+      last: 'Davis',
+    },
+    {
+      id: 3,
+      first: 'Charlie',
+      last: 'Rosenburg',
+    }
+  ];
+
+  compareWith = (o1, o2) => {
+    return o1 && o2 ? o1.id === o2.id : o1 === o2;
+  };
+
+  render() {
+    return [
+      <ion-list>
+        <ion-list-header>
+          <ion-label>
+            Objects as Values (compareWith)
+          </ion-label>
+        </ion-list-header>
+
+        <ion-item>
+          <ion-label>Users</ion-label>
+          <ion-select compareWith={this.compareWith}>
+            {this.users.map(user =>
+            <ion-select-option value={user}>
+              {user.first + ' ' + user.last}
+            </ion-select-option>
+            )}
+          </ion-select>
+        </ion-item>
+      </ion-list>
+    ];
+  }
+}
+```
+
+### Interface Options
+
+```tsx
+import { Component, h } from '@stencil/core';
+
+@Component({
+  tag: 'select-example',
+  styleUrl: 'select-example.css'
+})
+export class SelectExample {
+  private customAlertOptions: any = {
+    header: 'Pizza Toppings',
+    subHeader: 'Select your toppings',
+    message: '$1.00 per topping',
+    translucent: true
+  };
+
+  private customPopoverOptions: any = {
+    header: 'Hair Color',
+    subHeader: 'Select your hair color',
+    message: 'Only select your dominant hair color'
+  };
+
+  private customActionSheetOptions: any = {
+    header: 'Colors',
+    subHeader: 'Select your favorite color'
+  };
+
+  render() {
+    return [
+      <ion-list>
+        <ion-list-header>
+          <ion-label>
+            Interface Options
+          </ion-label>
+        </ion-list-header>
+
+        <ion-item>
+          <ion-label>Alert</ion-label>
+          <ion-select interfaceOptions={this.customAlertOptions} interface="alert" multiple={true} placeholder="Select One">
+            <ion-select-option value="bacon">Bacon</ion-select-option>
+            <ion-select-option value="olives">Black Olives</ion-select-option>
+            <ion-select-option value="xcheese">Extra Cheese</ion-select-option>
+            <ion-select-option value="peppers">Green Peppers</ion-select-option>
+            <ion-select-option value="mushrooms">Mushrooms</ion-select-option>
+            <ion-select-option value="onions">Onions</ion-select-option>
+            <ion-select-option value="pepperoni">Pepperoni</ion-select-option>
+            <ion-select-option value="pineapple">Pineapple</ion-select-option>
+            <ion-select-option value="sausage">Sausage</ion-select-option>
+            <ion-select-option value="Spinach">Spinach</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>Popover</ion-label>
+          <ion-select interfaceOptions={this.customPopoverOptions} interface="popover" placeholder="Select One">
+            <ion-select-option value="brown">Brown</ion-select-option>
+            <ion-select-option value="blonde">Blonde</ion-select-option>
+            <ion-select-option value="black">Black</ion-select-option>
+            <ion-select-option value="red">Red</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>Action Sheet</ion-label>
+          <ion-select interfaceOptions={this.customActionSheetOptions} interface="action-sheet" placeholder="Select One">
+            <ion-select-option value="red">Red</ion-select-option>
+            <ion-select-option value="purple">Purple</ion-select-option>
+            <ion-select-option value="yellow">Yellow</ion-select-option>
+            <ion-select-option value="orange">Orange</ion-select-option>
+            <ion-select-option value="green">Green</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-list>
+    ];
+  }
+}
+```
+
+
 ### Vue
 
-## Single Selection
+### Single Selection
 
 ```html
 <template>
@@ -777,7 +1009,7 @@ export const InterfaceOptionsSelection: React.FC = () => {
 </template>
 ```
 
-## Multiple Selection
+### Multiple Selection
 
 ```html
 <template>
@@ -817,7 +1049,7 @@ export const InterfaceOptionsSelection: React.FC = () => {
 </template>
 ```
 
-## Interface Options
+### Interface Options
 
 ```html
 <template>
@@ -898,20 +1130,20 @@ export const InterfaceOptionsSelection: React.FC = () => {
 
 ## Properties
 
-| Property           | Attribute           | Description                                                                                                                                                                                                                                                                                                                                                                       | Type                                                                                 | Default        |
-| ------------------ | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ | -------------- |
-| `cancelText`       | `cancel-text`       | The text to display on the cancel button.                                                                                                                                                                                                                                                                                                                                         | `string`                                                                             | `'Cancel'`     |
-| `compareWith`      | `compare-with`      | A property name or function used to compare object values                                                                                                                                                                                                                                                                                                                         | `((currentValue: any, compareValue: any) => boolean) \| null \| string \| undefined` | `undefined`    |
-| `disabled`         | `disabled`          | If `true`, the user cannot interact with the select.                                                                                                                                                                                                                                                                                                                              | `boolean`                                                                            | `false`        |
-| `interface`        | `interface`         | The interface the select should use: `action-sheet`, `popover` or `alert`.                                                                                                                                                                                                                                                                                                        | `"action-sheet" \| "alert" \| "popover"`                                             | `'alert'`      |
-| `interfaceOptions` | `interface-options` | Any additional options that the `alert`, `action-sheet` or `popover` interface can take. See the [AlertController API docs](../../alert/AlertController/#create), the [ActionSheetController API docs](../../action-sheet/ActionSheetController/#create) and the [PopoverController API docs](../../popover/PopoverController/#create) for the create options for each interface. | `any`                                                                                | `{}`           |
-| `mode`             | `mode`              | The mode determines which platform styles to use.                                                                                                                                                                                                                                                                                                                                 | `"ios" \| "md"`                                                                      | `undefined`    |
-| `multiple`         | `multiple`          | If `true`, the select can accept multiple values.                                                                                                                                                                                                                                                                                                                                 | `boolean`                                                                            | `false`        |
-| `name`             | `name`              | The name of the control, which is submitted with the form data.                                                                                                                                                                                                                                                                                                                   | `string`                                                                             | `this.inputId` |
-| `okText`           | `ok-text`           | The text to display on the ok button.                                                                                                                                                                                                                                                                                                                                             | `string`                                                                             | `'OK'`         |
-| `placeholder`      | `placeholder`       | The text to display when the select is empty.                                                                                                                                                                                                                                                                                                                                     | `null \| string \| undefined`                                                        | `undefined`    |
-| `selectedText`     | `selected-text`     | The text to display instead of the selected option's value.                                                                                                                                                                                                                                                                                                                       | `null \| string \| undefined`                                                        | `undefined`    |
-| `value`            | `value`             | the value of the select.                                                                                                                                                                                                                                                                                                                                                          | `any`                                                                                | `undefined`    |
+| Property           | Attribute           | Description                                                                                                                                                                                                                                                                                                                                               | Type                                                                                 | Default        |
+| ------------------ | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ | -------------- |
+| `cancelText`       | `cancel-text`       | The text to display on the cancel button.                                                                                                                                                                                                                                                                                                                 | `string`                                                                             | `'Cancel'`     |
+| `compareWith`      | `compare-with`      | A property name or function used to compare object values                                                                                                                                                                                                                                                                                                 | `((currentValue: any, compareValue: any) => boolean) \| null \| string \| undefined` | `undefined`    |
+| `disabled`         | `disabled`          | If `true`, the user cannot interact with the select.                                                                                                                                                                                                                                                                                                      | `boolean`                                                                            | `false`        |
+| `interface`        | `interface`         | The interface the select should use: `action-sheet`, `popover` or `alert`.                                                                                                                                                                                                                                                                                | `"action-sheet" \| "alert" \| "popover"`                                             | `'alert'`      |
+| `interfaceOptions` | `interface-options` | Any additional options that the `alert`, `action-sheet` or `popover` interface can take. See the [ion-alert docs](../alert), the [ion-action-sheet docs](../action-sheet) and the [ion-popover docs](../popover) for the create options for each interface.  Note: `interfaceOptions` will not override `inputs` or `buttons` with the `alert` interface. | `any`                                                                                | `{}`           |
+| `mode`             | `mode`              | The mode determines which platform styles to use.                                                                                                                                                                                                                                                                                                         | `"ios" \| "md"`                                                                      | `undefined`    |
+| `multiple`         | `multiple`          | If `true`, the select can accept multiple values.                                                                                                                                                                                                                                                                                                         | `boolean`                                                                            | `false`        |
+| `name`             | `name`              | The name of the control, which is submitted with the form data.                                                                                                                                                                                                                                                                                           | `string`                                                                             | `this.inputId` |
+| `okText`           | `ok-text`           | The text to display on the ok button.                                                                                                                                                                                                                                                                                                                     | `string`                                                                             | `'OK'`         |
+| `placeholder`      | `placeholder`       | The text to display when the select is empty.                                                                                                                                                                                                                                                                                                             | `null \| string \| undefined`                                                        | `undefined`    |
+| `selectedText`     | `selected-text`     | The text to display instead of the selected option's value.                                                                                                                                                                                                                                                                                               | `null \| string \| undefined`                                                        | `undefined`    |
+| `value`            | `value`             | the value of the select.                                                                                                                                                                                                                                                                                                                                  | `any`                                                                                | `undefined`    |
 
 
 ## Events
@@ -936,6 +1168,15 @@ depending on the `interface` property on the `ion-select`.
 Type: `Promise<any>`
 
 
+
+
+## Shadow Parts
+
+| Part            | Description                                              |
+| --------------- | -------------------------------------------------------- |
+| `"icon"`        | The select icon container.                               |
+| `"placeholder"` | The text displayed in the select when there is no value. |
+| `"text"`        | The displayed value of the select.                       |
 
 
 ## CSS Custom Properties

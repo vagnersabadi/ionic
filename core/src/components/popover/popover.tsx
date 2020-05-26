@@ -28,7 +28,6 @@ export class Popover implements ComponentInterface, OverlayInterface {
   private usersElement?: HTMLElement;
 
   presented = false;
-  mode = getIonMode(this);
 
   @Element() el!: HTMLIonPopoverElement;
 
@@ -203,6 +202,7 @@ export class Popover implements ComponentInterface, OverlayInterface {
       <Host
         aria-modal="true"
         no-router
+        tabindex="-1"
         style={{
           zIndex: `${20000 + this.overlayIndex}`,
         }}

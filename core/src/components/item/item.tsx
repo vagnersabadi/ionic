@@ -1,4 +1,4 @@
-import { Component, ComponentInterface, Element, Host, Listen, Prop, State, h } from '@stencil/core';
+import { Component, ComponentInterface, Element, Host, Listen, Prop, State, forceUpdate, h } from '@stencil/core';
 
 import { getIonMode } from '../../global/ionic-global';
 import { Color, CssClassMap, RouterDirection, StyleEventDetail } from '../../interface';
@@ -11,6 +11,8 @@ import { createColorClasses, hostContext, openURL } from '../../utils/theme';
  * @slot - Content is placed between the named slots if provided without a slot.
  * @slot start - Content is placed to the left of the item text in LTR, and to the right in RTL.
  * @slot end - Content is placed to the right of the item text in LTR, and to the left in RTL.
+ *
+ * @part detail-icon - The chevron icon for the item. Only applies when `detail="true"`.
  */
 @Component({
   tag: 'ion-item',
@@ -18,7 +20,9 @@ import { createColorClasses, hostContext, openURL } from '../../utils/theme';
     ios: 'item.ios.scss',
     md: 'item.md.scss'
   },
-  shadow: true
+  shadow: {
+    delegatesFocus: true
+  }
 })
 export class Item implements ComponentInterface, AnchorInterface, ButtonInterface {
 
@@ -123,7 +127,7 @@ export class Item implements ComponentInterface, AnchorInterface, ButtonInterfac
     }
     if (hasStyleChange) {
       this.itemStyles.set(tagName, newStyles);
-      this.el.forceUpdate();
+      forceUpdate(this);
     }
   }
 
@@ -213,7 +217,7 @@ export class Item implements ComponentInterface, AnchorInterface, ButtonInterfac
                 <slot></slot>
               </div>
               <slot name="end"></slot>
-              {showDetail && <ion-icon icon={detailIcon} lazy={false} class="item-detail-icon"></ion-icon>}
+              {showDetail && <ion-icon icon={detailIcon} lazy={false} class="item-detail-icon" part="detail-icon"></ion-icon>}
               <div class="item-inner-highlight"></div>
             </div>
             {canActivate && mode === 'md' && <ion-ripple-effect></ion-ripple-effect>}

@@ -84,17 +84,18 @@
 .scroll-x {
   -webkit-overflow-scrolling: touch;
   will-change: scroll-position;
-  overscroll-behavior: contain;
 }
 
 .scroll-y {
   touch-action: pan-y;
   overflow-y: var(--overflow);
+  overscroll-behavior-y: contain;
 }
 
 .scroll-x {
   touch-action: pan-x;
   overflow-x: var(--overflow);
+  overscroll-behavior-x: contain;
 }
 
 .scroll-x.scroll-y {
@@ -136,7 +137,7 @@
   /* stylelint-enable property-blacklist */
 
   width: 100%;
-  height: 100%;
+  height: 100vh;
 
   opacity: 0;
 
