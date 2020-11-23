@@ -43,6 +43,83 @@ See the [ion-alert docs](../alert), [ion-action-sheet docs](../action-sheet), an
 
 Note: `interfaceOptions` will not override `inputs` or `buttons` with the `alert` interface.
 
+## Customization
+
+There are two units that make up the Select component and each need to be styled separately. The `ion-select` element is represented on the view by the selected value(s), or placeholder if there is none, and dropdown icon. The interface, which is defined in the [Interfaces](#interfaces) section above, is the dialog that opens when clicking on the `ion-select`. The interface contains all of the options defined by adding `ion-select-option` elements. The following sections will go over the differences between styling these.
+
+### Styling Select Element
+
+As mentioned, the `ion-select` element consists only of the value(s), or placeholder, and icon that is displayed on the view. To customize this, style using a combination of CSS and any of the [CSS custom properties](#css-custom-properties):
+
+```css
+ion-select {
+  /* Applies to the value and placeholder color */
+  color: #545ca7;
+
+  /* Set a different placeholder color */
+  --placeholder-color: #971e49;
+
+  /* Set full opacity on the placeholder */
+  --placeholder-opacity: 1;
+}
+```
+
+Alternatively, depending on the [browser support](https://caniuse.com/#feat=mdn-css_selectors_part) needed, CSS shadow parts can be used to style the select:
+
+```css
+/* Set the width to the full container and center the content */
+ion-select {
+  width: 100%;
+
+  justify-content: center;
+}
+
+/* Set the flex in order to size the text width to its content */
+ion-select::part(placeholder),
+ion-select::part(text) {
+  flex: 0 0 auto;
+}
+
+/* Set the placeholder color and opacity */
+ion-select::part(placeholder) {
+  color: #20a08a;
+  opacity: 1;
+}
+
+/*
+ * Set the font of the first letter of the placeholder
+ * Shadow parts work with pseudo-elements, too!
+ * https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-elements
+ */
+ion-select::part(placeholder)::first-letter {
+  font-size: 24px;
+  font-weight: 500;
+}
+
+/* Set the text color */
+ion-select::part(text) {
+  color: #545ca7;
+}
+
+/* Set the icon color and opacity */
+ion-select::part(icon) {
+  color: #971e49;
+  opacity: 1;
+}
+```
+
+Notice that by using `::part`, any CSS property on the element can be targeted.
+
+### Styling Select Interface
+
+Customizing the interface dialog should be done by following the Customization section in that interface's documentation:
+
+- [Alert Customization](../alert#customization)
+- [Action Sheet Customization](../action-sheet#customization)
+- [Popover Customization](../popover#customization)
+
+However, the Select Option does set a class for easier styling and allows for the ability to pass a class to the overlay option, see the [Select Options documentation](../select-option) for usage examples of customizing options.
+
 <!-- Auto Generated Below -->
 
 
@@ -132,7 +209,7 @@ Note: `interfaceOptions` will not override `inputs` or `buttons` with the `alert
   <ion-item>
     <ion-label>Users</ion-label>
     <ion-select [compareWith]="compareWith">
-      <ion-select-option *ngFor="let user of users">{{user.first + ' ' + user.last}}</ion-select-option>
+      <ion-select-option *ngFor="let user of users" [value]="user">{{user.first + ' ' + user.last}}</ion-select-option>
     </ion-select>
   </ion-item>
 </ion-list>
@@ -141,13 +218,19 @@ Note: `interfaceOptions` will not override `inputs` or `buttons` with the `alert
 ```typescript
 import { Component } from '@angular/core';
 
+interface User {
+  id: number;
+  first: string;
+  last: string;
+}
+
 @Component({
   selector: 'select-example',
   templateUrl: 'select-example.html',
   styleUrls: ['./select-example.css'],
 })
 export class SelectExample {
-  users: any[] = [
+  users: User[] = [
     {
       id: 1,
       first: 'Alice',
@@ -165,11 +248,75 @@ export class SelectExample {
     }
   ];
 
-  compareWithFn = (o1, o2) => {
+  compareWith(o1: User, o2: User) {
     return o1 && o2 ? o1.id === o2.id : o1 === o2;
-  };
+  }
+}
+```
 
-  compareWith = compareWithFn;
+### Objects as Values with Multiple Selection
+
+```html
+<ion-list>
+  <ion-list-header>
+    <ion-label>
+      Objects as Values (compareWith)
+    </ion-label>
+  </ion-list-header>
+
+  <ion-item>
+    <ion-label>Users</ion-label>
+    <ion-select [compareWith]="compareWith" multiple="true">
+      <ion-select-option *ngFor="let user of users" [value]="user">{{user.first + ' ' + user.last}}</ion-select-option>
+    </ion-select>
+  </ion-item>
+</ion-list>
+```
+
+```typescript
+import { Component } from '@angular/core';
+
+interface User {
+  id: number;
+  first: string;
+  last: string;
+}
+
+@Component({
+  selector: 'select-example',
+  templateUrl: 'select-example.html',
+  styleUrls: ['./select-example.css'],
+})
+export class SelectExample {
+  users: User[] = [
+    {
+      id: 1,
+      first: 'Alice',
+      last: 'Smith',
+    },
+    {
+      id: 2,
+      first: 'Bob',
+      last: 'Davis',
+    },
+    {
+      id: 3,
+      first: 'Charlie',
+      last: 'Rosenburg',
+    }
+  ];
+
+  compareWith(o1: User, o2: User | User[]) {
+    if (!o1 || !o2) {
+      return o1 === o2;
+    }
+
+    if (Array.isArray(o2)) {
+      return o2.some((u: User) => u.id === o1.id);
+    }
+
+    return o1.id === o2.id;
+  }
 }
 ```
 
@@ -1007,6 +1154,29 @@ export class SelectExample {
 
   </ion-list>
 </template>
+
+<script>
+import { 
+  IonItem, 
+  IonLabel, 
+  IonList,
+  IonListHeader,
+  IonSelect,
+  IonSelectOption
+} from '@ionic/vue';
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+  components: {
+    IonItem, 
+    IonLabel, 
+    IonList,
+    IonListHeader,
+    IonSelect,
+    IonSelectOption
+  }
+});
+</script>
 ```
 
 ### Multiple Selection
@@ -1047,6 +1217,29 @@ export class SelectExample {
     </ion-item>
   </ion-list>
 </template>
+
+<script>
+import { 
+  IonItem, 
+  IonLabel, 
+  IonList,
+  IonListHeader,
+  IonSelect,
+  IonSelectOption
+} from '@ionic/vue';
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+  components: {
+    IonItem, 
+    IonLabel, 
+    IonList,
+    IonListHeader,
+    IonSelect,
+    IonSelectOption
+  }
+});
+</script>
 ```
 
 ### Interface Options
@@ -1100,29 +1293,52 @@ export class SelectExample {
   </ion-list>
 </template>
 
-<script lang="ts">
-  import { Component, Vue } from 'vue-property-decorator';
+<script>
+import { 
+  IonItem, 
+  IonLabel, 
+  IonList,
+  IonListHeader,
+  IonSelect,
+  IonSelectOption
+} from '@ionic/vue';
+import { defineComponent } from 'vue';
 
-  @Component()
-  export default class Example extends Vue {
-    customAlertOptions: any = {
+export default defineComponent({
+  components: {
+    IonItem, 
+    IonLabel, 
+    IonList,
+    IonListHeader,
+    IonSelect,
+    IonSelectOption
+  },
+  setup() {
+    const customAlertOptions: any = {
       header: 'Pizza Toppings',
       subHeader: 'Select your toppings',
       message: '$1.00 per topping',
       translucent: true
     };
 
-    customPopoverOptions: any = {
+    const customPopoverOptions: any = {
       header: 'Hair Color',
       subHeader: 'Select your hair color',
       message: 'Only select your dominant hair color'
     };
 
-    customActionSheetOptions: any = {
+    const customActionSheetOptions: any = {
       header: 'Colors',
       subHeader: 'Select your favorite color'
     };
+    
+    return {
+      customAlertOptions,
+      customPopoverOptions,
+      customActionSheetOptions
+    }
   }
+});
 </script>
 ```
 
@@ -1148,12 +1364,12 @@ export class SelectExample {
 
 ## Events
 
-| Event       | Description                              | Type                                   |
-| ----------- | ---------------------------------------- | -------------------------------------- |
-| `ionBlur`   | Emitted when the select loses focus.     | `CustomEvent<void>`                    |
-| `ionCancel` | Emitted when the selection is cancelled. | `CustomEvent<void>`                    |
-| `ionChange` | Emitted when the value has changed.      | `CustomEvent<SelectChangeEventDetail>` |
-| `ionFocus`  | Emitted when the select has focus.       | `CustomEvent<void>`                    |
+| Event       | Description                              | Type                                        |
+| ----------- | ---------------------------------------- | ------------------------------------------- |
+| `ionBlur`   | Emitted when the select loses focus.     | `CustomEvent<void>`                         |
+| `ionCancel` | Emitted when the selection is cancelled. | `CustomEvent<void>`                         |
+| `ionChange` | Emitted when the value has changed.      | `CustomEvent<SelectChangeEventDetail<any>>` |
+| `ionFocus`  | Emitted when the select has focus.       | `CustomEvent<void>`                         |
 
 
 ## Methods

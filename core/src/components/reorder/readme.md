@@ -241,7 +241,7 @@ export class ReorderExample {
 ```html
 <template>
   <!-- The reorder gesture is disabled by default, enable it to drag and drop items -->
-  <ion-reorder-group disabled="false">
+  <ion-reorder-group :disabled="false">
     <!-- Default reorder icon, end aligned items -->
     <ion-item>
       <ion-label>
@@ -309,15 +309,40 @@ export class ReorderExample {
     </ion-reorder>
   </ion-reorder-group>
 </template>
+
+<script>
+import { 
+  IonIcon, 
+  IonItem,
+  IonLabel, 
+  IonReorder, 
+  IonReorderGroup
+} from '@ionic/vue';
+import { pizza } from 'ionicons/icons';
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+  components: {
+    IonIcon,
+    IonItem, 
+    IonLabel, 
+    IonReorder, 
+    IonReorderGroup
+  },
+  setup() {
+    return { pizza }
+  }
+});
+</script>
 ```
 
 
 
 ## Shadow Parts
 
-| Part     | Description                     |
-| -------- | ------------------------------- |
-| `"icon"` | The icon of the reorder handle. |
+| Part     | Description                                     |
+| -------- | ----------------------------------------------- |
+| `"icon"` | The icon of the reorder handle (uses ion-icon). |
 
 
 ## Dependencies

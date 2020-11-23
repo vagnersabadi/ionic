@@ -1645,7 +1645,7 @@ export class ItemExample {
       <h3>H3 Title Text</h3>
       <p>Icon on right</p>
     </ion-label>
-    <ion-icon name="close-circle" slot="end"></ion-icon>
+    <ion-icon :icon="closeCircle" slot="end"></ion-icon>
   </ion-item>
 </template>
 ```
@@ -1667,22 +1667,22 @@ export class ItemExample {
   <ion-item>
     <ion-button slot="start">
       Start Icon
-      <ion-icon name="home" slot="end"></ion-icon>
+      <ion-icon :icon="home" slot="end"></ion-icon>
     </ion-button>
     <ion-label>Buttons with Icons</ion-label>
     <ion-button slot="end">
-      <ion-icon name="star" slot="end"></ion-icon>
+      <ion-icon :icon="star" slot="end"></ion-icon>
       End Icon
     </ion-button>
   </ion-item>
 
   <ion-item>
     <ion-button slot="start">
-      <ion-icon slot="icon-only" name="navigate"></ion-icon>
+      <ion-icon slot="icon-only" :icon="navigate"></ion-icon>
     </ion-button>
     <ion-label>Icon only Buttons</ion-label>
     <ion-button slot="end">
-      <ion-icon slot="icon-only" name="star"></ion-icon>
+      <ion-icon slot="icon-only" :icon="star"></ion-icon>
     </ion-button>
   </ion-item>
 </template>
@@ -1696,25 +1696,25 @@ export class ItemExample {
     <ion-label>
       Icon End
     </ion-label>
-    <ion-icon name="information-circle" slot="end"></ion-icon>
+    <ion-icon :icon="informationCircle" slot="end"></ion-icon>
   </ion-item>
 
   <ion-item>
     <ion-label>
       Large Icon End
     </ion-label>
-    <ion-icon name="information-circle" size="large" slot="end"></ion-icon>
+    <ion-icon :icon="informationCircle" size="large" slot="end"></ion-icon>
   </ion-item>
 
   <ion-item>
     <ion-label>
       Small Icon End
     </ion-label>
-    <ion-icon name="information-circle" size="small" slot="end"></ion-icon>
+    <ion-icon :icon="informationCircle" size="small" slot="end"></ion-icon>
   </ion-item>
 
   <ion-item>
-    <ion-icon name="star" slot="start"></ion-icon>
+    <ion-icon :icon="star" slot="start"></ion-icon>
     <ion-label>
       Icon Start
     </ion-label>
@@ -1724,8 +1724,8 @@ export class ItemExample {
     <ion-label>
       Two Icons End
     </ion-label>
-    <ion-icon name="checkmark-circle" slot="end"></ion-icon>
-    <ion-icon name="shuffle" slot="end"></ion-icon>
+    <ion-icon :icon="checkmarkCircle" slot="end"></ion-icon>
+    <ion-icon :icon="shuffle" slot="end"></ion-icon>
   </ion-item>
 </template>
 ```
@@ -1777,27 +1777,87 @@ export class ItemExample {
     <ion-range></ion-range>
   </ion-item>
 </template>
+
+<script>
+import { 
+  IonAvatar,
+  IonButton,
+  IonCheckbox, 
+  IonDatetime,
+  IonIcon,
+  IonInput, 
+  IonItem, 
+  IonLabel, 
+  IonRange,
+  IonSelect, 
+  IonSelectOption, 
+  IonText,
+  IonThumbnail,
+  IonToggle
+} from '@ionic/vue';
+import { 
+  checkmarkCircle, 
+  closeCircle, 
+  home, 
+  informationCircle, 
+  navigate, 
+  shuffle, 
+  star
+} from 'ionicons/icons';
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+  components: { 
+    IonAvatar,
+    IonButton,
+    IonCheckbox, 
+    IonDatetime,
+    IonIcon,
+    IonInput, 
+    IonItem, 
+    IonLabel, 
+    IonRange,
+    IonSelect, 
+    IonSelectOption, 
+    IonText,
+    IonThumbnail,
+    IonToggle
+  },
+  setup() {
+    return {
+      checkmarkCircle, 
+      closeCircle, 
+      home, 
+      informationCircle, 
+      navigate, 
+      shuffle, 
+      star
+    }
+  }
+});
+</script>
 ```
 
 
 
 ## Properties
 
-| Property          | Attribute          | Description                                                                                                                                                                                                                                                                               | Type                                       | Default             |
-| ----------------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ | ------------------- |
-| `button`          | `button`           | If `true`, a button tag will be rendered and the item will be tappable.                                                                                                                                                                                                                   | `boolean`                                  | `false`             |
-| `color`           | `color`            | The color to use from your application's color palette. Default options are: `"primary"`, `"secondary"`, `"tertiary"`, `"success"`, `"warning"`, `"danger"`, `"light"`, `"medium"`, and `"dark"`. For more information on colors, see [theming](/docs/theming/basics).                    | `string \| undefined`                      | `undefined`         |
-| `detail`          | `detail`           | If `true`, a detail arrow will appear on the item. Defaults to `false` unless the `mode` is `ios` and an `href` or `button` property is present.                                                                                                                                          | `boolean \| undefined`                     | `undefined`         |
-| `detailIcon`      | `detail-icon`      | The icon to use when `detail` is set to `true`.                                                                                                                                                                                                                                           | `string`                                   | `'chevron-forward'` |
-| `disabled`        | `disabled`         | If `true`, the user cannot interact with the item.                                                                                                                                                                                                                                        | `boolean`                                  | `false`             |
-| `download`        | `download`         | This attribute instructs browsers to download a URL instead of navigating to it, so the user will be prompted to save it as a local file. If the attribute has a value, it is used as the pre-filled file name in the Save prompt (the user can still change the file name if they want). | `string \| undefined`                      | `undefined`         |
-| `href`            | `href`             | Contains a URL or a URL fragment that the hyperlink points to. If this property is set, an anchor tag will be rendered.                                                                                                                                                                   | `string \| undefined`                      | `undefined`         |
-| `lines`           | `lines`            | How the bottom border should be displayed on the item.                                                                                                                                                                                                                                    | `"full" \| "inset" \| "none" \| undefined` | `undefined`         |
-| `mode`            | `mode`             | The mode determines which platform styles to use.                                                                                                                                                                                                                                         | `"ios" \| "md"`                            | `undefined`         |
-| `rel`             | `rel`              | Specifies the relationship of the target object to the link object. The value is a space-separated list of [link types](https://developer.mozilla.org/en-US/docs/Web/HTML/Link_types).                                                                                                    | `string \| undefined`                      | `undefined`         |
-| `routerDirection` | `router-direction` | When using a router, it specifies the transition direction when navigating to another page using `href`.                                                                                                                                                                                  | `"back" \| "forward" \| "root"`            | `'forward'`         |
-| `target`          | `target`           | Specifies where to display the linked URL. Only applies when an `href` is provided. Special keywords: `"_blank"`, `"_self"`, `"_parent"`, `"_top"`.                                                                                                                                       | `string \| undefined`                      | `undefined`         |
-| `type`            | `type`             | The type of the button. Only used when an `onclick` or `button` property is present.                                                                                                                                                                                                      | `"button" \| "reset" \| "submit"`          | `'button'`          |
+| Property          | Attribute          | Description                                                                                                                                                                                                                                                                               | Type                                                    | Default             |
+| ----------------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- | ------------------- |
+| `button`          | `button`           | If `true`, a button tag will be rendered and the item will be tappable.                                                                                                                                                                                                                   | `boolean`                                               | `false`             |
+| `color`           | `color`            | The color to use from your application's color palette. Default options are: `"primary"`, `"secondary"`, `"tertiary"`, `"success"`, `"warning"`, `"danger"`, `"light"`, `"medium"`, and `"dark"`. For more information on colors, see [theming](/docs/theming/basics).                    | `string \| undefined`                                   | `undefined`         |
+| `detail`          | `detail`           | If `true`, a detail arrow will appear on the item. Defaults to `false` unless the `mode` is `ios` and an `href` or `button` property is present.                                                                                                                                          | `boolean \| undefined`                                  | `undefined`         |
+| `detailIcon`      | `detail-icon`      | The icon to use when `detail` is set to `true`.                                                                                                                                                                                                                                           | `string`                                                | `'chevron-forward'` |
+| `disabled`        | `disabled`         | If `true`, the user cannot interact with the item.                                                                                                                                                                                                                                        | `boolean`                                               | `false`             |
+| `download`        | `download`         | This attribute instructs browsers to download a URL instead of navigating to it, so the user will be prompted to save it as a local file. If the attribute has a value, it is used as the pre-filled file name in the Save prompt (the user can still change the file name if they want). | `string \| undefined`                                   | `undefined`         |
+| `href`            | `href`             | Contains a URL or a URL fragment that the hyperlink points to. If this property is set, an anchor tag will be rendered.                                                                                                                                                                   | `string \| undefined`                                   | `undefined`         |
+| `lines`           | `lines`            | How the bottom border should be displayed on the item.                                                                                                                                                                                                                                    | `"full" \| "inset" \| "none" \| undefined`              | `undefined`         |
+| `mode`            | `mode`             | The mode determines which platform styles to use.                                                                                                                                                                                                                                         | `"ios" \| "md"`                                         | `undefined`         |
+| `rel`             | `rel`              | Specifies the relationship of the target object to the link object. The value is a space-separated list of [link types](https://developer.mozilla.org/en-US/docs/Web/HTML/Link_types).                                                                                                    | `string \| undefined`                                   | `undefined`         |
+| `routerAnimation` | --                 | When using a router, it specifies the transition animation when navigating to another page using `href`.                                                                                                                                                                                  | `((baseEl: any, opts?: any) => Animation) \| undefined` | `undefined`         |
+| `routerDirection` | `router-direction` | When using a router, it specifies the transition direction when navigating to another page using `href`.                                                                                                                                                                                  | `"back" \| "forward" \| "root"`                         | `'forward'`         |
+| `target`          | `target`           | Specifies where to display the linked URL. Only applies when an `href` is provided. Special keywords: `"_blank"`, `"_self"`, `"_parent"`, `"_top"`.                                                                                                                                       | `string \| undefined`                                   | `undefined`         |
+| `type`            | `type`             | The type of the button. Only used when an `onclick` or `button` property is present.                                                                                                                                                                                                      | `"button" \| "reset" \| "submit"`                       | `'button'`          |
 
 
 ## Slots
@@ -1811,9 +1871,10 @@ export class ItemExample {
 
 ## Shadow Parts
 
-| Part            | Description                                                       |
-| --------------- | ----------------------------------------------------------------- |
-| `"detail-icon"` | The chevron icon for the item. Only applies when `detail="true"`. |
+| Part            | Description                                                                  |
+| --------------- | ---------------------------------------------------------------------------- |
+| `"detail-icon"` | The chevron icon for the item. Only applies when `detail="true"`.            |
+| `"native"`      | The native HTML button, anchor or div element that wraps all child elements. |
 
 
 ## CSS Custom Properties

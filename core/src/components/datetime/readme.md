@@ -748,14 +748,15 @@ export class DatetimeExample {
   </ion-item>
 </template>
 
-<script lang="ts">
-  import { Component, Vue } from 'vue-property-decorator';
+<script>
+import { IonDatetime, IonItem, IonLabel } from '@ionic/vue';
+import { defineComponent } from 'vue';
 
-  @Component()
-  export default class Example extends Vue {
-    customYearValues = [2020, 2016, 2008, 2004, 2000, 1996];
-
-    customDayShortNames = [
+export default defineComponent({
+  components: { IonDatetime, IonItem, IonLabel },
+  setup() {
+    const customYearValues = [2020, 2016, 2008, 2004, 2000, 1996];
+    const customDayShortNames = [
       's\u00f8n',
       'man',
       'tir',
@@ -764,8 +765,7 @@ export class DatetimeExample {
       'fre',
       'l\u00f8r'
     ];
-
-    customPickerOptions = {
+    const customPickerOptions = {
       buttons: [{
         text: 'Save',
         handler: () => console.log('Clicked Save!')
@@ -777,7 +777,14 @@ export class DatetimeExample {
         }
       }]
     }
+    
+    return {
+      customYearValues,
+      customDayShortNames,
+      customPickerOptions
+    }
   }
+});
 </script>
 ```
 
@@ -789,7 +796,7 @@ export class DatetimeExample {
 | ----------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
 | `cancelText`      | `cancel-text`       | The text to display on the picker's cancel button.                                                                                                                                                                                                                                                                                                                                                                                                                                                | `string`                                                                                                                                                                                                                                                                                                                                                                                                                                                      | `'Cancel'`      |
 | `dayNames`        | `day-names`         | Full day of the week names. This can be used to provide locale names for each day in the week. Defaults to English.                                                                                                                                                                                                                                                                                                                                                                               | `string \| string[] \| undefined`                                                                                                                                                                                                                                                                                                                                                                                                                             | `undefined`     |
-| `dayShortNames`   | `day-short-names`   | Short abbreviated day of the week names. This can be used to provide locale names for each day in the week. Defaults to English.                                                                                                                                                                                                                                                                                                                                                                  | `string \| string[] \| undefined`                                                                                                                                                                                                                                                                                                                                                                                                                             | `undefined`     |
+| `dayShortNames`   | `day-short-names`   | Short abbreviated day of the week names. This can be used to provide locale names for each day in the week. Defaults to English. Defaults to: `['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']`                                                                                                                                                                                                                                                                                                 | `string \| string[] \| undefined`                                                                                                                                                                                                                                                                                                                                                                                                                             | `undefined`     |
 | `dayValues`       | `day-values`        | Values used to create the list of selectable days. By default every day is shown for the given month. However, to control exactly which days of the month to display, the `dayValues` input can take a number, an array of numbers, or a string of comma separated numbers. Note that even if the array days have an invalid number for the selected month, like `31` in February, it will correctly not show days which are not valid for the selected month.                                    | `number \| number[] \| string \| undefined`                                                                                                                                                                                                                                                                                                                                                                                                                   | `undefined`     |
 | `disabled`        | `disabled`          | If `true`, the user cannot interact with the datetime.                                                                                                                                                                                                                                                                                                                                                                                                                                            | `boolean`                                                                                                                                                                                                                                                                                                                                                                                                                                                     | `false`         |
 | `displayFormat`   | `display-format`    | The display format of the date and time as text that shows within the item. When the `pickerFormat` input is not used, then the `displayFormat` is used for both display the formatted text, and determining the datetime picker's columns. See the `pickerFormat` input description for more info. Defaults to `MMM D, YYYY`.                                                                                                                                                                    | `string`                                                                                                                                                                                                                                                                                                                                                                                                                                                      | `'MMM D, YYYY'` |

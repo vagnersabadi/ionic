@@ -2,7 +2,7 @@ import { Component, ComponentInterface, Element, Event, EventEmitter, Host, Meth
 
 import { getIonMode } from '../../global/ionic-global';
 import { ActionSheetButton, ActionSheetOptions, AlertInput, AlertOptions, CssClassMap, OverlaySelect, PopoverOptions, SelectChangeEventDetail, SelectInterface, SelectPopoverOption, StyleEventDetail } from '../../interface';
-import { findItemLabel, renderHiddenInput } from '../../utils/helpers';
+import { findItemLabel, getAriaLabel, renderHiddenInput } from '../../utils/helpers';
 import { actionSheetController, alertController, popoverController } from '../../utils/overlays';
 import { hostContext } from '../../utils/theme';
 import { watchForOptions } from '../../utils/watch-options';
@@ -29,7 +29,7 @@ export class Select implements ComponentInterface {
   private inputId = `ion-sel-${selectIds++}`;
   private overlay?: OverlaySelect;
   private didInit = false;
-  private buttonEl?: HTMLButtonElement;
+  private focusEl?: HTMLButtonElement;
   private mutationO?: MutationObserver;
 
   @Element() el!: HTMLIonSelectElement;
@@ -229,9 +229,15 @@ export class Select implements ComponentInterface {
   private createActionSheetButtons(data: HTMLIonSelectOptionElement[], selectValue: any): ActionSheetButton[] {
     const actionSheetButtons = data.map(option => {
       const value = getOptionValue(option);
+
+      // Remove hydrated before copying over classes
+      const copyClasses = Array.from(option.classList).filter(cls => cls !== 'hydrated').join(' ');
+      const optClass = `${OPTION_CLASS} ${copyClasses}`;
+
       return {
         role: (isOptionSelected(value, selectValue, this.compareWith) ? 'selected' : ''),
         text: option.textContent,
+        cssClass: optClass,
         handler: () => {
           this.value = value;
         }
@@ -251,32 +257,48 @@ export class Select implements ComponentInterface {
   }
 
   private createAlertInputs(data: HTMLIonSelectOptionElement[], inputType: 'checkbox' | 'radio', selectValue: any): AlertInput[] {
-    return data.map(o => {
-      const value = getOptionValue(o);
+    const alertInputs = data.map(option => {
+      const value = getOptionValue(option);
+
+      // Remove hydrated before copying over classes
+      const copyClasses = Array.from(option.classList).filter(cls => cls !== 'hydrated').join(' ');
+      const optClass = `${OPTION_CLASS} ${copyClasses}`;
+
       return {
         type: inputType,
-        label: o.textContent || '',
+        cssClass: optClass,
+        label: option.textContent || '',
         value,
         checked: isOptionSelected(value, selectValue, this.compareWith),
-        disabled: o.disabled
+        disabled: option.disabled
       };
     });
+
+    return alertInputs;
   }
 
   private createPopoverOptions(data: HTMLIonSelectOptionElement[], selectValue: any): SelectPopoverOption[] {
-    return data.map(o => {
-      const value = getOptionValue(o);
+    const popoverOptions = data.map(option => {
+      const value = getOptionValue(option);
+
+      // Remove hydrated before copying over classes
+      const copyClasses = Array.from(option.classList).filter(cls => cls !== 'hydrated').join(' ');
+      const optClass = `${OPTION_CLASS} ${copyClasses}`;
+
       return {
-        text: o.textContent || '',
+        text: option.textContent || '',
+        cssClass: optClass,
         value,
         checked: isOptionSelected(value, selectValue, this.compareWith),
-        disabled: o.disabled,
+        disabled: option.disabled,
         handler: () => {
           this.value = value;
           this.close();
         }
       };
     });
+
+    return popoverOptions;
   }
 
   private async openPopover(ev: UIEvent) {
@@ -381,8 +403,8 @@ export class Select implements ComponentInterface {
   }
 
   private setFocus() {
-    if (this.buttonEl) {
-      this.buttonEl.focus();
+    if (this.focusEl) {
+      this.focusEl.focus();
     }
   }
 
@@ -398,6 +420,9 @@ export class Select implements ComponentInterface {
   }
 
   private onClick = (ev: UIEvent) => {
+    ev.preventDefault();
+    ev.stopPropagation();
+
     this.setFocus();
     this.open(ev);
   }
@@ -410,22 +435,20 @@ export class Select implements ComponentInterface {
   }
 
   render() {
-    const { placeholder, name, disabled, isExpanded, value, el } = this;
+    const { disabled, el, inputId, isExpanded, name, placeholder, value } = this;
     const mode = getIonMode(this);
-    const labelId = this.inputId + '-lbl';
-    const label = findItemLabel(el);
-    if (label) {
-      label.id = labelId;
-    }
+    const { labelText, labelId } = getAriaLabel(el, inputId);
+
+    renderHiddenInput(true, el, name, parseValue(value), disabled);
+
+    const displayValue = this.getText();
 
     let addPlaceholderClass = false;
-    let selectText = this.getText();
+    let selectText = displayValue;
     if (selectText === '' && placeholder != null) {
       selectText = placeholder;
       addPlaceholderClass = true;
     }
-
-    renderHiddenInput(true, el, name, parseValue(value), disabled);
 
     const selectTextClasses: CssClassMap = {
       'select-text': true,
@@ -434,14 +457,20 @@ export class Select implements ComponentInterface {
 
     const textPart = addPlaceholderClass ? 'placeholder' : 'text';
 
+    // If there is a label then we need to concatenate it with the
+    // current value and a comma so it separates nicely when the screen reader
+    // announces it, otherwise just announce the value
+    const displayLabel = labelText !== undefined
+      ? `${displayValue}, ${labelText}`
+      : displayValue;
+
     return (
       <Host
         onClick={this.onClick}
-        role="combobox"
-        aria-haspopup="dialog"
+        role="button"
+        aria-haspopup="listbox"
         aria-disabled={disabled ? 'true' : null}
-        aria-expanded={`${isExpanded}`}
-        aria-labelledby={labelId}
+        aria-label={displayLabel}
         class={{
           [mode]: true,
           'in-item': hostContext('ion-item', el),
@@ -454,14 +483,20 @@ export class Select implements ComponentInterface {
         <div class="select-icon" role="presentation" part="icon">
           <div class="select-icon-inner"></div>
         </div>
+        <label id={labelId}>
+          {displayLabel}
+        </label>
         <button
           type="button"
+          disabled={disabled}
+          id={inputId}
+          aria-labelledby={labelId}
+          aria-haspopup="listbox"
+          aria-expanded={`${isExpanded}`}
           onFocus={this.onFocus}
           onBlur={this.onBlur}
-          disabled={disabled}
-          ref={(btnEl => this.buttonEl = btnEl)}
-        >
-        </button>
+          ref={(focusEl => this.focusEl = focusEl)}
+        ></button>
       </Host>
     );
   }
@@ -529,3 +564,5 @@ const textForValue = (opts: HTMLIonSelectOptionElement[], value: any, compareWit
 };
 
 let selectIds = 0;
+
+const OPTION_CLASS = 'select-interface-option';
